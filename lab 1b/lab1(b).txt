@@ -1,0 +1,111 @@
+mysql> create database employee_details;
+Query OK, 1 row affected (0.04 sec)
+
+mysql> use employee_details;
+Database changed
+
+mysql> create table department(deptno int PRIMARY KEY, dname varchar(20), managerid int);
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> create table employee(empid int PRIMARY KEY, ename varchar(20), age int, salary int, deptno int references department(deptno));
+Query OK, 0 rows affected (0.18 sec)
+
+mysql> desc employee;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| empid  | int         | NO   | PRI | NULL    |       |
+| ename  | varchar(20) | YES  |     | NULL    |       |
+| age    | int         | YES  |     | NULL    |       |
+| salary | int         | YES  |     | NULL    |       |
+| deptno | int         | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> desc department;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| deptno    | int         | NO   | PRI | NULL    |       |
+| dname     | varchar(20) | YES  |     | NULL    |       |
+| managerid | int         | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> insert into employee values(1, 'Akash', 22, 25000, 101);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into employee values(2, 'Arun', 25, 65000, 102);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into employee values(3, 'Abhi', 20, 20000, 103),(4, 'Akul', 30, 40000, 104);
+Query OK, 2 rows affected (0.03 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> insert into employee values(5, 'Anil', 27, 30000, 105);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into department values
+    -> (101, 'CS', 201),
+    -> (102, 'Civil', 202),
+    -> (103, 'CS', 203),
+    -> (104, 'Electronics', 204),
+    -> (105, 'Mechanical', 205);
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from employee;
++-------+-------+------+--------+--------+
+| empid | ename | age  | salary | deptno |
++-------+-------+------+--------+--------+
+|     1 | Akash |   22 |  25000 |    101 |
+|     2 | Arun  |   25 |  65000 |    102 |
+|     3 | Abhi  |   20 |  20000 |    103 |
+|     4 | Akul  |   30 |  40000 |    104 |
+|     5 | Anil  |   27 |  30000 |    105 |
++-------+-------+------+--------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select * from department;
++--------+-------------+-----------+
+| deptno | dname       | managerid |
++--------+-------------+-----------+
+|    101 | CS          |       201 |
+|    102 | Civil       |       202 |
+|    103 | CS          |       203 |
+|    104 | Electronics |       204 |
+|    105 | Mechanical  |       205 |
++--------+-------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> select empid, ename from employee where salary between 10000 and 50000;
++-------+-------+
+| empid | ename |
++-------+-------+
+|     1 | Akash |
+|     3 | Abhi  |
+|     4 | Akul  |
+|     5 | Anil  |
++-------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select ename, salary from employee where deptno in(select deptno from department where dname = 'CS');
++-------+--------+
+| ename | salary |
++-------+--------+
+| Akash |  25000 |
+| Abhi  |  20000 |
++-------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select ename, dname from employee e, department d where e.deptno = d.deptno;
++-------+-------------+
+| ename | dname       |
++-------+-------------+
+| Akash | CS          |
+| Arun  | Civil       |
+| Abhi  | CS          |
+| Akul  | Electronics |
+| Anil  | Mechanical  |
++-------+-------------+
+5 rows in set (0.00 sec)

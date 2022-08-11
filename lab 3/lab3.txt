@@ -1,0 +1,189 @@
+3. Consider the Insurances database given below. The primary keys are underlined the data types are specified.
+PERSON (DRIVER-ID#: string, name: string, address: string)
+CAR (Regno: string, model: string, year: int)
+ACCIDENT (report-number: int, date: date, location: string)
+OWNS (#driver-id: string, #Regno: string)
+PARTICIPATED (#driver-id: string, #Regno: string, #report-number: int, Damage amount: int)
+    i. Create the above tables by property specifying the primary keys and the foreign keys.
+    ii. Enter atleast five tables for each relation.
+    iii. Demonstrate how you
+        -- a. Update the damage amount for the car with a specific Regno in the accident with report number 12 to 25000.
+        -- b. Add a new accident to the database.
+    iv. Find the total number of people who owned cars that were involved in accidents in 2002.
+    v. Find the total number of accidents in which cars belonging to a specific model were involved.
+
+mysql> create database insurance;
+Query OK, 1 row affected (0.04 sec)
+
+mysql> use insurance;
+Database changed
+
+mysql> create table person(driverId char(10) PRIMARY KEY, name char(10), address char(10));
+Query OK, 0 rows affected (0.14 sec)
+
+mysql> create table car(regno char(10) PRIMARY KEY, model char(10), year int);
+Query OK, 0 rows affected (0.17 sec)
+
+mysql> create table accident(reportno int, date date, location char(10));
+Query OK, 0 rows affected (0.19 sec)
+
+mysql> create table owns(driverId char(10), FOREIGN KEY (driverId) references person(driverId), regno char(10), FOREIGN KEY (regno) references car(regno));
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> create table participated(driverId char(10) references person(driverId), regno char(10) references car(regno), reportno int references accident(reportno), damageAmt int);
+Query OK, 0 rows affected (0.18 sec)
+
+mysql> insert into person values
+    -> ('a20','Rohita','Vidyanagar'),
+    -> ('a21','Rahul','GokulRoad'),
+    -> ('a22','Rani','Hosur'),
+    -> ('a23','Ravi','Keshwapur'),
+    -> ('a24','Rohit','MGRoad');
+Query OK, 5 rows affected (0.04 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> insert into car values
+    -> ('ka20','Santro',2000),
+    -> ('ka21','Benz',2001),
+    -> ('ka22','Ferari',2002),
+    -> ('ka23','Hatiz',2003),
+    -> ('ka24','Swift',2004)
+    -> ;
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> insert into accident values
+    -> (11,'2001-01-01','Gadag'),
+    -> (12,'2002-02-02','Hubli'),
+    -> (13,'2003-03-03','Bombay'),
+    -> (14,'2004-04-04','Delhi'),
+    -> (15,'2005-05-05','Goa');
+Query OK, 5 rows affected (0.07 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> insert into owns values
+    -> ('a20','ka20'),
+    -> ('a21','ka21'),
+    -> ('a22','ka22'),
+    -> ('a23','ka23'),
+    -> ('a24','ka24');
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> insert into participated values
+    -> ('a20','ka20',11,1000),
+    -> ('a21','ka21',12,2000),
+    -> ('a22','ka22',13,3000),
+    -> ('a23','ka23',14,4000),
+    -> ('a24','ka24',15,5000);
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from person;
++----------+--------+------------+
+| driverId | name   | address    |
++----------+--------+------------+
+| a20      | Rohita | Vidyanagar |
+| a21      | Rahul  | GokulRoad  |
+| a22      | Rani   | Hosur      |
+| a23      | Ravi   | Keshwapur  |
+| a24      | Rohit  | MGRoad     |
++----------+--------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from car;
++-------+--------+------+
+| regno | model  | year |
++-------+--------+------+
+| ka20  | Santro | 2000 |
+| ka21  | Benz   | 2001 |
+| ka22  | Ferari | 2002 |
+| ka23  | Hatiz  | 2003 |
+| ka24  | Swift  | 2004 |
++-------+--------+------+
+5 rows in set (0.00 sec)
+
+mysql> select * from accident;
++----------+------------+----------+
+| reportno | date       | location |
++----------+------------+----------+
+|       11 | 2001-01-01 | Gadag    |
+|       12 | 2002-02-02 | Hubli    |
+|       13 | 2003-03-03 | Bombay   |
+|       14 | 2004-04-04 | Delhi    |
+|       15 | 2005-05-05 | Goa      |
++----------+------------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select * from owns;
++----------+-------+
+| driverId | regno |
++----------+-------+
+| a20      | ka20  |
+| a21      | ka21  |
+| a22      | ka22  |
+| a23      | ka23  |
+| a24      | ka24  |
++----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select * from participated;
++----------+-------+----------+-----------+
+| driverId | regno | reportno | damageAmt |
++----------+-------+----------+-----------+
+| a20      | ka20  |       11 |      1000 |
+| a21      | ka21  |       12 |      2000 |
+| a22      | ka22  |       13 |      3000 |
+| a23      | ka23  |       14 |      4000 |
+| a24      | ka24  |       15 |      5000 |
++----------+-------+----------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> update participated set damageAmt = 25000 where regno = 'ka21' and reportno = 12;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from participated;
++----------+-------+----------+-----------+
+| driverId | regno | reportno | damageAmt |
++----------+-------+----------+-----------+
+| a20      | ka20  |       11 |      1000 |
+| a21      | ka21  |       12 |     25000 |
+| a22      | ka22  |       13 |      3000 |
+| a23      | ka23  |       14 |      4000 |
+| a24      | ka24  |       15 |      5000 |
++----------+-------+----------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> insert into accident values(18, '2008-08-05', 'Dharwad');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select * from accident;
++----------+------------+----------+
+| reportno | date       | location |
++----------+------------+----------+
+|       11 | 2001-01-01 | Gadag    |
+|       12 | 2002-02-02 | Hubli    |
+|       13 | 2003-03-03 | Bombay   |
+|       14 | 2004-04-04 | Delhi    |
+|       15 | 2005-05-05 | Goa      |
+|       18 | 2008-08-05 | Dharwad  |
++----------+------------+----------+
+6 rows in set (0.00 sec)
+
+mysql> select count(driverId) from participated p, accident a where p.reportno = a.reportno AND date BETWEEN '2002-01-01' AND '2002-12-31';
++-----------------+
+| count(driverId) |
++-----------------+
+|               1 |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> select count(reportno) from participated p,car c where p.regno = c.regno
+AND model = 'Santro';
++-----------------+
+| count(reportno) |
++-----------------+
+|               1 |
++-----------------+
+1 row in set (0.00 sec)
